@@ -23,7 +23,7 @@ class Command(BaseCommand):
                         category_name=item['fields']['category_name'],
                         disc=item['fields']['disc']
                 )
-            with open(BASE_DIR / 'product.json', 'r', encoding='utf-8-sig') as file:
+            with open(BASE_DIR / 'product_card.html.json', 'r', encoding='utf-8-sig') as file:
                 product_data = json.load(file)
                 for item in product_data:
                     category_name = item['fields']['category']

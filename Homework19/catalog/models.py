@@ -6,7 +6,7 @@ class Category(models.Model):
     disc = models.CharField(max_length=200, verbose_name='описание')
 
     def __str__(self):
-        return  f'{self.category_name} ({self.disc})'
+        return f'{self.category_name}'
 
     class Meta:
         verbose_name = 'категория'
@@ -23,6 +23,9 @@ class Product(models.Model):
 
     def __str__(self):
         return f'{self.product_name}'
+
+    def short_des(self):
+        return self.product_disc[:100] + '...'
 
     class Meta:
         verbose_name = 'товар'

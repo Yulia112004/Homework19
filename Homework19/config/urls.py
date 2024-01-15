@@ -19,12 +19,13 @@ from django.contrib import admin
 from django.urls import path, include
 
 from catalog import views
-from catalog.views import product_card
+from catalog.views import ProductDetailView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('catalog.urls', namespace="catalog")),
-    path('product/<pk>', product_card),
+    path('product/<pk>', ProductDetailView.as_view()),
+    path('blog/', include('blog.urls', namespace="blog")),
 ]
 
 if settings.DEBUG:

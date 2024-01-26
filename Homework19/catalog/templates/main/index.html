@@ -15,10 +15,15 @@
             <div class="card-body">
                 <h1 class="card-title pricing-card-title">{{ product.price }} руб.</h1>
                 <p>Описание: {{ product.product_disc }}</p>
+                  {% for version in product.version_set.all %}
+                    {% if version.is_active %}
+                  <p>Текущая версия: {{ version.version_number }}</p>
+                    {% endif %}
+                    {% endfor %}
             </div>
             <div class="btn-group">
                 <a href="/product/{{ product.pk }}" type="button" class="btn btn-sm btn-outline-secondary">View</a>
-                <a href="#" type="button" class="btn btn-sm btn-outline-secondary">Edit</a>
+                <a href="{% url 'catalog:update_product' product.pk %}" type="button" class="btn btn-sm btn-outline-secondary">Edit</a>
                 <a href="#" type="button" class="btn btn-sm btn-outline-danger">Delete</a>
             </div>
         </div>

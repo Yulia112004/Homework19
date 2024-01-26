@@ -1,11 +1,14 @@
 from PIL import Image
-from django.shortcuts import render
+from django.forms import formset_factory, inlineformset_factory
+from django.shortcuts import render, get_object_or_404
+from django.urls import reverse_lazy, reverse
 from django.views import View
 
-from catalog.forms import ProductForm
+from catalog.forms import ProductForm, VersionForm
 from django.core.paginator import Paginator
-from django.views.generic import ListView, DetailView
-from catalog.models import Product, Contact
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from catalog.models import Product, Contact, Version
+
 
 # Create your views here.
 class ProductListView(ListView):
@@ -46,16 +49,50 @@ class ProductDetailView(DetailView):
         return context
 
 
-class CreateProductView(View):
-    def get(self, request, *args, **kwargs):
-        form = ProductForm()
-        return render(request, 'main/create_product.html', {'form': form})
+class ProductCreateView(CreateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'main/product_form.html'
+    success_url = '/'
 
-    def post(self, request, *args, **kwargs):
-        form = ProductForm(request.POST, request.FILES)
-        if form.is_valid():
-            my_model = form.save(commit=False)
-            my_model.save()
-            image_file = request.FILES['image']
-            image = Image.open(image_file)
-        return render(request, 'main/index.html', {'form': form})
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'main/product_form.html'
+    success_url = reverse_lazy('catalog:index')
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        VersionFormset = inlineformset_factory(Product, Version, form=VersionForm, extra=1)
+        if self.request.method == "POST":
+            context_data['formset'] = VersionFormset(self.request.POST, instance=self.object)
+        else:
+            context_data['formset'] = VersionFormset(instance=self.object)
+        return context_data
+
+    def form_valid(self, form):
+        formset = self.get_context_data()['formset']
+        self.object = form.save()
+        if formset.is_valid():
+            formset.instance = self.object
+            formset.save()
+
+        return super().form_valid(form)
+
+class VersionListView(ListView):
+    model = Version
+    form_class = VersionForm
+
+
+class VersionCreateView(CreateView):
+    model = Version
+    form_class = VersionForm
+
+    def get_success_url(self, *args, **kwargs):
+        product_pk = Product.objects.get(pk=self.kwargs.get('pk'))
+        return reverse('catalog:version_list', args=[product_pk.pk])

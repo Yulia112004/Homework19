@@ -17,6 +17,11 @@
                 <p>Категория: {{ product.category }} </p>
                 <p>Дата создания: {{ product.data_created }} </p>
                 <p>Дата изменения: {{ product.data_changed }} </p>
+                 {% for version in product.version_set.all %}
+                    {% if version.is_active %}
+                  <p>Текущая версия: {{ version.version_number }}</p>
+                    {% endif %}
+                    {% endfor %}
             </div>
         </div>
     </div>

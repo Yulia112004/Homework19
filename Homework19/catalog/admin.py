@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from catalog.models import Product, Category, Contact
+from catalog.models import Product, Category, Contact, Version
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -16,3 +16,8 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):
     list_display = ('pk', 'country', 'inn', 'address',)
+
+@admin.register(Version)
+class VersionAdmin(admin.ModelAdmin):
+    list_display = ('version_number', 'product')
+    list_filter = ('is_active',)

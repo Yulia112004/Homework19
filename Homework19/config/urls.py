@@ -26,6 +26,7 @@ urlpatterns = [
     path('', include('catalog.urls', namespace="catalog")),
     path('product/<pk>', ProductDetailView.as_view()),
     path('blog/', include('blog.urls', namespace="blog")),
+    path('users/', include('users.urls', namespace='users')),
 ]
 
 if settings.DEBUG:

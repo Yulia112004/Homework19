@@ -1,6 +1,9 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from users.models import User
+
+
 # Create your models here.
 class Category(models.Model):
     category_name = models.CharField(max_length=100, verbose_name='наименование')
@@ -21,6 +24,7 @@ class Product(models.Model):
     price = models.IntegerField(verbose_name='цена за штуку')
     data_created = models.DateTimeField(verbose_name='дата создания')
     data_changed = models.DateTimeField(verbose_name='дата последнего изменения')
+    owner = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
 
     def __str__(self):
         return f'{self.product_name}'

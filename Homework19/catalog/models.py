@@ -25,6 +25,7 @@ class Product(models.Model):
     data_created = models.DateTimeField(verbose_name='дата создания')
     data_changed = models.DateTimeField(verbose_name='дата последнего изменения')
     owner = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
+    is_published = models.BooleanField(default=True)
 
     def __str__(self):
         return f'{self.product_name}'
@@ -59,7 +60,7 @@ class Version(models.Model):
     version_number = models.IntegerField(verbose_name='номер версии')
     is_active = models.BooleanField(default=True, verbose_name='Признак текущей версии')
 
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='продукт')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='versions', verbose_name='продукт')
 
     def __str__(self):
         return f'{self.version_name} {self.version_number} {self.is_active}'

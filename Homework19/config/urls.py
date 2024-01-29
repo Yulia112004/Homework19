@@ -17,6 +17,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from django.views.decorators.cache import cache_page
 
 from catalog import views
 from catalog.views import ProductDetailView
@@ -24,7 +25,7 @@ from catalog.views import ProductDetailView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('catalog.urls', namespace="catalog")),
-    path('product/<pk>', ProductDetailView.as_view()),
+    path('product/<pk>', cache_page(60)(ProductDetailView.as_view())),
     path('blog/', include('blog.urls', namespace="blog")),
     path('users/', include('users.urls', namespace='users')),
 ]

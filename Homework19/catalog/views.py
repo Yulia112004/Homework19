@@ -8,6 +8,7 @@ from catalog.forms import ProductForm, VersionForm
 from django.core.paginator import Paginator
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from catalog.models import Product, Contact, Version
+from catalog.services import get_categories
 
 
 # Create your views here.
@@ -15,6 +16,18 @@ class ProductListView(ListView):
     model = Product
     template_name = "main/index.html"
     paginate_by = 1
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        categories = get_categories()
+        products = [product for product in Product.objects.all() if product.is_published][:6]
+
+        for product in products:
+            product.active_versions = product.versions.filter(is_active=True).first()
+
+        context['products'] = products
+        context['categories'] = categories
+        return context
 
 
 class ContactListView(ListView):
